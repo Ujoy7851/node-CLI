@@ -10,9 +10,14 @@
   "author": "",
   "license": "ISC",
   "bin": {
-    "cli": "./template.js"
+    "cli": "./template.js",
+    "acc": "./account.js"
   },
   "dependencies": {
-    "commander": "^5.1.0"
+    "chalk": "^4.1.0",
+    "commander": "^5.1.0",
+    "inquirer": "^7.3.2",
+    "mysql2": "^2.1.0",
+    "sequelize": "^6.3.3"
   }
 }
