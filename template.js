@@ -127,10 +127,7 @@ program
     .description('파일을 복사합니다.')
     .action((name, directory) => {
         copyFile(name, directory);
-    });
-
-program
-    .command('remove <path>')
+    })
     .usage('<path>')
     .description('지정한 경로의 하위 파일/폴더를 지웁니다.')
     .action((path) => {

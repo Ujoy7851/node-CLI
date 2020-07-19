@@ -64,17 +64,18 @@ program
                 name: 'money',
                 message: '금액을 입력하세요.',
                 default: '0',
-                when: answer => answer.type === '수입' || '지출'
+                // when: answer => answer.type === '수입' || '지출'
+                when: answer => ['수입', '지출'].includes(answer.type)
             }, {
                 type: 'input',
                 name: 'desc',
                 message: '상세 내역을 작성하세요.',
                 defalut: '.',
-                when: answer => answer.type === '수입' || '지출'
+                when: answer => ['수입', '지출'].includes(answer.type)
             }, {
                 type: 'confirm',
                 name: 'confirm',
-                message: '생성하시겠습니까?',
+                message: '진행하시겠습니까?',
             }])
                 .then(async (answer) => {
                     if(answer.confirm) {
@@ -82,17 +83,24 @@ program
                             await sequelize.sync();
                             await Account.create({
                                 money: parseInt(answer.money, 10),
-                                desc,
+                                desc: answer.desc,
                                 type: true
                             });
                             await sequelize.close();
                         } else if (answer.type === '지출') {
                             await sequelize.sync();
-                            await Account.create({
-                                money: parseInt(answer.money, 10),
-                                desc,
-                                type: false
-                            });
+                            const logs = await Account.findAll({});
+                            const revenue = logs.filter(l => l.type === true).reduce((acc, cur) => acc + cur.money, 0);
+                            const expense = logs.filter(l => l.type === false).reduce((acc, cur) => acc + cur.money, 0);
+                            if((revenue - expense) >= parseInt(answer.money)) {
+                                await Account.create({
+                                    money: parseInt(answer.money, 10),
+                                    desc: answer.desc,
+                                    type: false
+                                });
+                            } else {
+                                console.log('금액이 모자랍니다.');
+                            }
                             await sequelize.close();
                         } else {
                             await sequelize.sync();
